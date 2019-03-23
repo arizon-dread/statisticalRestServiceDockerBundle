@@ -1,0 +1,33 @@
+version: "3"
+services:
+  statistical-rest-service:
+    build: ./StatisticalRestService
+    ports: 
+      - 8081:8080
+    depends_on:
+      - postgres
+    networks:
+      - statisticsNet
+  postgres:
+    container_name: postgres
+    build: ./Postgres
+    ports:
+      - 5433:5432
+    volumes:
+      -  postgres-volume:/var/lib/postgresql/data
+    command: postgres -c 'config_file=/usr/local/share/postgresql/postgresql.conf'
+    networks:
+      - statisticsNet
+    environment:
+      POSTGRES_USER: statEntityUser
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: StatisticalRestService
+    #healthcheck:
+        #test: ["CMD-SHELL", "pg_isready -U postgres"]
+        #interval: 20s
+        #timeout: 5s
+        #retries: 5
+networks:
+  statisticsNet:
+volumes:
+  postgres-volume:
